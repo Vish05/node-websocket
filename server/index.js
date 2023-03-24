@@ -1,6 +1,7 @@
-const webSocketsServerPort = 8001;
+const webSocketsServerPort = 8002;
 const webSocketServer = require('websocket').server;
 const http = require('http');
+const uuidv4 = require('uuid').v4;
 // Spinning the http server and the websocket server.
 const server = http.createServer();
 server.listen(webSocketsServerPort);
@@ -10,8 +11,7 @@ const wsServer = new webSocketServer({
 
 // Generates unique ID for every new connection
 const getUniqueID = () => {
-  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  return s4() + s4() + '-' + s4();
+  return uuidv4();
 };
 
 // I'm maintaining all active connections in this object
@@ -22,6 +22,9 @@ const users = {};
 let editorContent = null;
 // User activity history.
 let userActivity = [];
+
+// User activity history.
+let gameActivity = [];
 
 
 
@@ -34,7 +37,9 @@ const sendMessage = (json) => {
 
 const typesDef = {
   USER_EVENT: "userevent",
-  CONTENT_CHANGE: "contentchange"
+  CONTENT_CHANGE: "contentchange",
+  ANNONUYMSUER: "annonuymsuser",
+  GAME_EVENT: "gameevent"
 }
 
 wsServer.on('request', function(request) {
@@ -44,29 +49,43 @@ wsServer.on('request', function(request) {
   const connection = request.accept(null, request.origin);
   clients[userID] = connection;
   console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients));
-  connection.on('message', function(message) {
+  connection.on('message', function (message) {
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
       const json = { type: dataFromClient.type };
-      if (dataFromClient.type === typesDef.USER_EVENT) {
+      if (dataFromClient.type === typesDef.ANNONUYMSUER) {
+        json.data = {
+          id: userID,
+          date: Date.now(),
+        };
+        users[userID] = dataFromClient;
+        userActivity.push(`${dataFromClient.username} joined to edit the document`);
+        sendMessage(JSON.stringify(json));
+      }
+      else if (dataFromClient.type === typesDef.GAME_EVENT) {
+        gameActivity[dataFromClient.gameId] = {
+          gameName: dataFromClient.gameName,
+          users
+        }
+        json.data = { gameActivity };
+        console.log(gameActivity)
+        sendMessage(JSON.stringify(json));
+      } else if (dataFromClient.type === typesDef.USER_EVENT) {
         users[userID] = dataFromClient;
         userActivity.push(`${dataFromClient.username} joined to edit the document`);
         json.data = { users, userActivity };
-      } else if (dataFromClient.type === typesDef.CONTENT_CHANGE) {
-        editorContent = dataFromClient.content;
-        json.data = { editorContent, userActivity };
       }
-      sendMessage(JSON.stringify(json));
     }
   });
   // user disconnected
-  connection.on('close', function(connection) {
-    console.log((new Date()) + " Peer " + userID + " disconnected.");
-    const json = { type: typesDef.USER_EVENT };
-    userActivity.push(`${users[userID].username} left the document`);
-    json.data = { users, userActivity };
-    delete clients[userID];
-    delete users[userID];
-    sendMessage(JSON.stringify(json));
+  connection.on('close', function (connection) {
+    console.log("close connection")
+    // console.log((new Date()) + " Peer " + userID + " disconnected.");
+    // const json = { type: typesDef.USER_EVENT };
+    // userActivity.push(`${users[userID].username} left the document`);
+    // json.data = { users, userActivity };
+    // delete clients[userID];
+    // delete users[userID];
+    // sendMessage(JSON.stringify(json));
   });
 });

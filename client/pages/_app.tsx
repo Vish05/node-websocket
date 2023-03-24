@@ -1,10 +1,13 @@
 import type { AppProps } from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react';
 import { theme } from '../styles/theme';
+import { AuthContext } from "../context/authContext"
+import { useAuth } from "../hooks/auth-hook"
 import Head from 'next/head'
 
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { token, login, logout } = useAuth();
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -22,7 +25,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='msapplication-TileColor' content='#333333' />
         <meta name='theme-color' content='#333333' />
       </Head>
-      <Component {...pageProps} />
+      <AuthContext.Provider value={{
+        isLoggedIn: !!token, token: token, login: login, logout: logout, game: {
+          gameId: "",
+          gameName: ""
+        }
+      }}>
+        <Component {...pageProps} />
+      </AuthContext.Provider>
     </ChakraProvider>
   )
 }

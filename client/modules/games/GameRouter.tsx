@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { Spinner, Text, useDisclosure } from '@chakra-ui/react'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
@@ -6,14 +7,16 @@ import { useEffect } from 'react'
 
 import { Game } from './Game'
 import { createPlayer } from './mutations/createPlayer'
-import { JoinGameModal } from '../players/components/JoinGameModal'
+import { JoinGameModal } from '../players/components/JoinGameModal';
+import { AuthContext } from "../../context/authContext"
 
 export const GameRouter: NextPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const user = {
     "uid": "123",
-    displayName: "A"
+    displayName: ""
   };
+  const { game, token } = useContext(AuthContext);
   //const { players, game, isLoading, error } = useGame()
   const { isOpen, onClose } = useDisclosure({ defaultIsOpen: !user?.displayName })
 
