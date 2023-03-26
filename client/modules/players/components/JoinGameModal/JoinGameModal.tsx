@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -12,23 +13,28 @@ import {
   FormErrorMessage,
   HStack,
   Switch,
-} from '@chakra-ui/react'
-import { useForm, SubmitHandler } from 'react-hook-form'
+} from "@chakra-ui/react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { WS_URL } from "../../../../hooks/socketConfig";
+import useWebSocket from "react-use-websocket";
+import { AuthContext } from "../../../../context/authContext";
+import { useRouter } from "next/router";
+
 //import { createPlayer } from 'src/modules/games/mutations'
 
 //import { useGame, useMe } from 'src/modules/games/queries'
 //import { updateDisplayName } from '../../mutations/updateDisplayName'
 
 interface JoinGameModalProps {
-  isOpen: boolean
-  onClose: () => void
-  currentName?: string | null | undefined
+  isOpen: boolean;
+  onClose: () => void;
+  currentName?: string | null | undefined;
 }
 
 type Inputs = {
-  displayName: string
-  isSpectator: boolean
-}
+  displayName: string;
+  isSpectator: boolean;
+};
 
 // This modal is shown when the user joins a game and doesn't have a display name
 export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
@@ -38,7 +44,19 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<Inputs>()
+  } = useForm<Inputs>();
+
+  const router = useRouter();
+  const { id: gameId } = router.query;
+  let { token: userId } = useContext(AuthContext);
+
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    WS_URL,
+    {
+      share: true,
+      filter: () => false,
+    }
+  );
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     //const gameId = game.id
@@ -51,38 +69,55 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
     // Create player in db
     //await createPlayer({ gameId, isSpectator })
 
-    onClose()
-  }
+    sendJsonMessage({
+      type: "userevent",
+      userId,
+      name: data.displayName,
+      gameId,
+    });
+
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Welcome to PointIt 👋</ModalHeader>
-        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
           <FormControl isInvalid={!!errors.displayName}>
             <ModalBody>
-              <FormLabel htmlFor='name' hidden={true}>
+              <FormLabel htmlFor="name" hidden={true}>
                 Display name
               </FormLabel>
               <Input
-                id='display-name'
-                size='lg'
-                placeholder='Enter your name'
-                {...register('displayName', {
-                  required: 'Please enter your name',
+                id="display-name"
+                size="lg"
+                placeholder="Enter your name"
+                {...register("displayName", {
+                  required: "Please enter your name",
                 })}
               />
-              <FormErrorMessage>{errors.displayName && errors.displayName.message}</FormErrorMessage>
+              <FormErrorMessage>
+                {errors.displayName && errors.displayName.message}
+              </FormErrorMessage>
               <HStack mt={4}>
-                <FormLabel htmlFor='join-as-spectator' mb='0'>
+                <FormLabel htmlFor="join-as-spectator" mb="0">
                   Join as spectator?
                 </FormLabel>
-                <Switch id='join-as-spectator' colorScheme='green' {...register('isSpectator')} />
+                <Switch
+                  id="join-as-spectator"
+                  colorScheme="green"
+                  {...register("isSpectator")}
+                />
               </HStack>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme='green' isLoading={isSubmitting} type='submit'>
+              <Button
+                colorScheme="green"
+                isLoading={isSubmitting}
+                type="submit"
+              >
                 Let&apos;s go!
               </Button>
             </ModalFooter>
@@ -90,5 +125,5 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
         </form>
       </ModalContent>
     </Modal>
-  )
+  );
 }
