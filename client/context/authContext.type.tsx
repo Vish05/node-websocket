@@ -1,12 +1,13 @@
-export interface IGame {
-  gameId: string;
-  gameName: string;
+export interface IUser {
+  id: string;
+  name: string;
+  isSpectator: boolean;
 }
 
 export type AuthContextType = {
   isLoggedIn: boolean;
   token: string | null;
-  game: IGame;
+  user: IUser;
   login: (token: string) => void;
   logout: () => void;
 };

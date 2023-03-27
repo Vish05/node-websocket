@@ -25,7 +25,7 @@ export const StartGameForm = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
-  let { game, token: ownerUserID } = useContext(AuthContext);
+  let { token: ownerUserID } = useContext(AuthContext);
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WS_URL,
@@ -46,10 +46,6 @@ export const StartGameForm = () => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const gameId = getUniqueID();
     const gameName = data.gameName;
-    game = {
-      gameId,
-      gameName,
-    };
     sendJsonMessage({
       type: "gameevent",
       gameId,

@@ -46,7 +46,6 @@ export const Home: NextPage = () => {
     }
   }, [readyState, sendJsonMessage]);
 
-  console.log("39 =>", lastJsonMessage);
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (typeof lastJsonMessage === "object") {

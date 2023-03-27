@@ -1,10 +1,7 @@
 import { useState, useContext } from "react";
-import { Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useEffect } from "react";
-
-//import { useGame } from './queries'
-
 import { Game } from "./Game";
 import { createPlayer } from "./mutations/createPlayer";
 import { JoinGameModal } from "../players/components/JoinGameModal";
@@ -14,16 +11,10 @@ import { WS_URL } from "../../hooks/socketConfig";
 import { useRouter } from "next/router";
 
 export const GameRouter: NextPage = () => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   const user = {
-  //     "uid": "123",
-  //     displayName: ""
-  //   };
   const { token: userId, setUserData, user } = useContext(AuthContext);
   const [game, setGame] = useState<any>(null);
   const router = useRouter();
   const { id: gameId } = router.query;
-  //const { players, game, isLoading, error } = useGame()
   const { isOpen, onClose } = useDisclosure({
     defaultIsOpen: !user?.name,
   });
@@ -46,8 +37,14 @@ export const GameRouter: NextPage = () => {
             name: user.name,
           });
         }
-        if (storedData.type === "gameUpdate" && storedData.data.game) {
+        const GAMEUPDATE = "gameUpdate";
+        console.log(storedData.type);
+        console.log(storedData.type === "gameUpdate");
+        console.log(storedData.type == "gameUpdate");
+        console.log(typeof storedData.type);
+        if (storedData.data.game) {
           setGame(storedData.data.game);
+          console.log(game);
         }
       }
     }
@@ -60,25 +57,6 @@ export const GameRouter: NextPage = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   // async function checkAndJoinGame() {
-  //   //   const isUserAlreadyInGame = players?.find((player) => player.userId === user?.uid)
-  //   //   const hasDisplayName = user?.displayName
-
-  //   //   if (players && hasDisplayName && !isUserAlreadyInGame) {
-  //   //     await createPlayer({ gameId: game.id })
-  //   //   }
-  //   // }
-  //   // checkAndJoinGame()
-  // }, [game.id, user, players])
-
-  // if (isLoading) {
-  //   return <Spinner />
-  // }
-
-  // if (error) {
-  //   return <Text>Error</Text>
-  // }
   if (!user?.name) {
     return <JoinGameModal isOpen={isOpen} onClose={onClose} />;
   }

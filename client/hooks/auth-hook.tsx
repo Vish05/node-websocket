@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { IUser } from "../context/authContext.type";
 
 const initalState = {
   id: "",
@@ -7,7 +8,7 @@ const initalState = {
 };
 
 export const useAuth = () => {
-  const [user, setUser] = useState<any>(initalState);
+  const [user, setUser] = useState<IUser>(initalState);
   const login = useCallback((token: string) => {
     const userData = {
       id: token,
@@ -24,7 +25,7 @@ export const useAuth = () => {
   }, []);
 
   const setUserData = useCallback(
-    (data: any) => {
+    (data: IUser) => {
       const userData = {
         ...user,
         ...data,

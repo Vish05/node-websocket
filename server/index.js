@@ -72,22 +72,23 @@ wsServer.on("request", function (request) {
         userActivity.push(
           `${dataFromClient.username} joined to edit the document`
         );
+        console.log(users);
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.GAME_EVENT) {
+        const { gameName, gameId, ownerUserID } = dataFromClient;
         gameActivity[dataFromClient.gameId] = {
-          gameName: dataFromClient.gameName,
-          gameId: dataFromClient.gameId,
-          owenerId: dataFromClient.ownerUserID,
-          users: [dataFromClient.ownerUserID],
+          gameName: gameName,
+          gameId: gameId,
+          owenerId: ownerUserID,
+          revealed: false,
+          users: [ownerUserID],
         };
         json.data = { gameActivity };
         //console.log(gameActivity);
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.USER_EVENT) {
-        const name = dataFromClient.name;
-        const userId = dataFromClient.userId;
-        const gameId = dataFromClient.gameId;
-
+        console.log("users=>", users);
+        const { name, userId, gameId } = dataFromClient;
         gameActivity[gameId].users.push(userId);
         users[userId].name = name;
 
@@ -103,7 +104,7 @@ wsServer.on("request", function (request) {
         json.type = "gameUpate";
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === "getGameUpdate") {
-        const gameId = dataFromClient.gameId;
+        const { gameId } = dataFromClient;
         json.data = { game: gameActivity[gameId] };
         json.type = "gameUpate";
         console.log(users, gameActivity);

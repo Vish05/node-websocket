@@ -16,23 +16,14 @@ export const Game: NextPage = ({ game }: any) => {
   //     revealed: true,
   //     name: "poker",
   //   };
-  const players = game.user;
+  console.log(game.users);
+  const players = game.users;
   const borderColor = useColorModeValue("gray.100", "gray.600");
   const bgColor = useColorModeValue("#FAFEFA", "gray.700");
 
-  if (!game || !players) {
-    return <Box>Loading...</Box>;
-  }
-
-  return (
-    <Box>
-      <Box>
-        {players.map((p: any) => (
-          <Box>{p}</Box>
-        ))}
-      </Box>
-    </Box>
-  );
+  //   if (!game || !players) {
+  //     return <Box>Loading...</Box>;
+  //   }
 
   return (
     <Box>

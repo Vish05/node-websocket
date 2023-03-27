@@ -1,14 +1,14 @@
 import { createContext } from "react";
 import { AuthContextType } from "./authContext.type";
 
-export const AuthContext = createContext<any>({
+export const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   token: null,
-  game: {
-    gameId: "",
-    gameName: "",
+  user: {
+    id: "",
+    name: "",
+    isSpectator: false,
   },
-  user: {},
   login: () => {},
   logout: () => {},
 });
