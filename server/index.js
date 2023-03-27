@@ -18,12 +18,9 @@ const getUniqueID = () => {
 const clients = {};
 // I'm maintaining all active users in this object
 const users = {};
-// The current editor content is maintained here.
-let editorContent = null;
 // User activity history.
 let userActivity = [];
-
-// User activity history.
+// Game Activity.
 let gameActivity = [];
 
 const sendMessage = (json) => {
