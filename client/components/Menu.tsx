@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import {
   HStack,
   useToast,
@@ -18,30 +19,28 @@ import { ChangeNameModal } from '../modules/players/components/ChangeNameModal'
 //mport { useGame, useMe } from '../modules/games/queries'
 import { setIsSpectator } from '../modules/games/mutations/setIsSpectator'
 import { ColorModeButton } from './ColorModeButton'
+import { AuthContext } from '../context/authContext'
+import { useRouter } from "next/router";
+
 
 export const Menu = () => {
   //const { me } = useMe()
   //const { game } = useGame();
+  const router = useRouter();
+  const { id: curretGameID } = router.query;
+  const { user } = useContext(AuthContext);
+
+
+  console.log(typeof curretGameID)
 
   const game =
   {
     points: 3,
     isSpectator: false,
-    id: "22"
-  }
-
-
-  const me = {
-    points: 3,
-    isSpectator: false,
-    id: "233"
+    id: curretGameID
   }
 
   //const [user] = useAuthState(auth);
-  const user = {
-    "uid": "123",
-    displayName: "A"
-  };
   const toast = useToast()
   const { isOpen, onClose, onOpen } = useDisclosure()
 
@@ -56,7 +55,7 @@ export const Menu = () => {
     })
   }
 
-  if (!me) {
+  if (!user) {
     return <div>Loading...</div>
   }
 
@@ -64,7 +63,7 @@ export const Menu = () => {
     <>
       <ChakraMenu>
         <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-          {user?.displayName}
+          {user?.name}
         </MenuButton>
         <ColorModeButton />
         <MenuList>
@@ -73,12 +72,12 @@ export const Menu = () => {
           </MenuItem>
           <MenuItem
             closeOnSelect={false}
-            onClick={() => setIsSpectator({ isSpectator: !me.isSpectator, playerSessionId: me.id, gameId: game.id })}
+            onClick={() => setIsSpectator({ isSpectator: !user.isSpectator, playerSessionId: user.id, gameId: '666abfaf-8868' })}
             icon={<ViewIcon />}
           >
             <HStack justify='space-between' w='100%'>
               <Text>Spectator mode</Text>
-              <Switch colorScheme='green' isChecked={me.isSpectator} defaultChecked={me.isSpectator} />
+              <Switch colorScheme='green' isChecked={user.isSpectator} defaultChecked={user.isSpectator} />
             </HStack>
           </MenuItem>
           <MenuItem onClick={copyGameLink} icon={<CopyIcon />}>

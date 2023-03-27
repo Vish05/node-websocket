@@ -16,14 +16,16 @@ export const Game: NextPage = ({ game }: any) => {
   //     revealed: true,
   //     name: "poker",
   //   };
-  console.log(game.users);
-  const players = game.users;
+
   const borderColor = useColorModeValue("gray.100", "gray.600");
   const bgColor = useColorModeValue("#FAFEFA", "gray.700");
 
-  //   if (!game || !players) {
-  //     return <Box>Loading...</Box>;
-  //   }
+  // if (!game || !players) {
+  //   return <Box>Loading...</Box>;
+  // }
+
+  console.log(game.users);
+  const players = game.users;
 
   return (
     <Box>
@@ -33,7 +35,7 @@ export const Game: NextPage = ({ game }: any) => {
             <Box w="full" py="8" px="75">
               <Logo />
             </Box>
-            <Box flex={1}>{players && <Table />}</Box>
+            <Box flex={1}>{players && <Table players={players} />}</Box>
             {game?.revealed && <ResultsSummary />}
           </Flex>
         </Box>

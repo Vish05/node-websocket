@@ -19,32 +19,25 @@ export const GameRouter: NextPage = () => {
     defaultIsOpen: !user?.name,
   });
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    WS_URL,
-    {
-      share: true,
-      filter: () => true,
-    }
-  );
-  console.log("38 =>", lastJsonMessage, readyState);
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(WS_URL, {
+    share: true,
+    filter: () => true,
+  });
+
+  console.log("38 =>", lastJsonMessage);
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (typeof lastJsonMessage === "object") {
         const storedData = JSON.parse(JSON.stringify(lastJsonMessage));
-        if (storedData.type === "nameUpdate" && storedData.data.user) {
-          const user = storedData.data.user;
-          setUserData({
-            name: user.name,
-          });
-        }
-        const GAMEUPDATE = "gameUpdate";
-        console.log(storedData.type);
-        console.log(storedData.type === "gameUpdate");
-        console.log(storedData.type == "gameUpdate");
-        console.log(typeof storedData.type);
-        if (storedData.data.game) {
+        // if (storedData.type === "nameUpdate" && storedData.data.user) {
+        //   const responseData = storedData.data.user;
+        //   setUserData(responseData);
+        // }
+        if (storedData.type === "gameUpdate" && storedData.data.game) {
           setGame(storedData.data.game);
-          console.log(game);
+          const responseData = storedData.data.user;
+          setUserData(responseData);
+          console.log(storedData)
         }
       }
     }
@@ -55,11 +48,11 @@ export const GameRouter: NextPage = () => {
       type: "getGameUpdate",
       gameId,
     });
-  }, []);
+  }, [sendJsonMessage]);
 
   if (!user?.name) {
     return <JoinGameModal isOpen={isOpen} onClose={onClose} />;
   }
-
+  console.log(game);
   return <Game game={game} />;
 };

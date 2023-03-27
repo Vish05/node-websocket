@@ -5,6 +5,7 @@ const initalState = {
   id: "",
   name: "",
   isSpectator: false,
+  points: 0
 };
 
 export const useAuth = () => {
@@ -14,6 +15,7 @@ export const useAuth = () => {
       id: token,
       name: "",
       isSpectator: false,
+      points: 0
     };
     setUser(userData);
     localStorage.setItem("userData", JSON.stringify(userData));
@@ -24,17 +26,15 @@ export const useAuth = () => {
     localStorage.removeItem("userData");
   }, []);
 
-  const setUserData = useCallback(
-    (data: IUser) => {
-      const userData = {
-        ...user,
-        ...data,
-      };
-      setUser(userData);
-      localStorage.setItem("userData", JSON.stringify(userData));
-    },
-    [user]
-  );
+  const setUserData = useCallback((data: IUser) => {
+    const userData = {
+      ...user,
+      ...data,
+    };
+    setUser(userData);
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+  }, [user]);
 
   useEffect(() => {
     const value = localStorage.getItem("userData");

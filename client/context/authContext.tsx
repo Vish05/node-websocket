@@ -8,7 +8,9 @@ export const AuthContext = createContext<AuthContextType>({
     id: "",
     name: "",
     isSpectator: false,
+    points: 0
   },
-  login: () => {},
-  logout: () => {},
+  login: () => { },
+  logout: () => { },
+  setUserData: () => { }
 });

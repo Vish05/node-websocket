@@ -48,7 +48,7 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
 
   const router = useRouter();
   const { id: gameId } = router.query;
-  let { token: userId } = useContext(AuthContext);
+  let { token: userId, user, isLoggedIn } = useContext(AuthContext);
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WS_URL,
@@ -69,10 +69,14 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
     // Create player in db
     //await createPlayer({ gameId, isSpectator })
 
+    const { displayName, isSpectator } = data;
+
     sendJsonMessage({
       type: "userevent",
       userId,
-      name: data.displayName,
+      name: displayName,
+      isSpectator: isSpectator,
+      points: user.points,
       gameId,
     });
 

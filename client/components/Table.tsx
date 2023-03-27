@@ -4,20 +4,20 @@ import Player from './Player/Player'
 // import { DocumentData } from 'firebase/firestore'
 //import { useGame } from '../modules/games/queries'
 
-export function Table(): JSX.Element {
+export function Table({ players }: any): JSX.Element {
   //const { players } = useGame()
-  const players = [
-    {
-      name: "vishal",
-      isSpectator: false,
-      points: 8
-    }
+  // const players = [
+  //   {
+  //     name: "vishal",
+  //     isSpectator: false,
+  //     points: 8
+  //   }
 
-  ]
+  // ]
 
-  if (!players) {
-    return <div>Loading...</div>
-  }
+  // if (!players) {
+  //   return <div>Loading...</div>
+  // }
 
   return (
     <Grid
@@ -30,7 +30,7 @@ export function Table(): JSX.Element {
       `}
     >
       {players
-        .filter((player) => !player.isSpectator)
+        .filter((player: any) => !player.isSpectator)
         .splice(0, 16)
         .map(({ name, points }, i) => {
           return (

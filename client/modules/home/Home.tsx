@@ -25,7 +25,7 @@ interface responseMessage {
 
 export const Home: NextPage = () => {
   const backgroundColor = useColorModeValue("#FAFEFA", "#171923");
-  const { login, isLoggedIn, token } = useContext(AuthContext);
+  const { login, isLoggedIn, token, setUserData } = useContext(AuthContext);
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WS_URL,
     {
@@ -49,10 +49,17 @@ export const Home: NextPage = () => {
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (typeof lastJsonMessage === "object") {
-        //console.log(Object.values(response?.data))
         const storedData = JSON.parse(JSON.stringify(lastJsonMessage));
-        if (storedData.type === "annonuymsuser" && storedData.data.id) {
-          login(storedData.data.id);
+        if (storedData.type === "annonuymsuser" && storedData.data.user) {
+          const { id, isSpectator, name, points } = storedData.data.user
+          login(id);
+          const user = {
+            id,
+            isSpectator,
+            name,
+            points
+          }
+          setUserData(user)
         }
       }
     }

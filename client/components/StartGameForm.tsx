@@ -10,7 +10,6 @@ import {
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AuthContext } from "../context/authContext";
-//import { createGame } from 'src/modules/home/mutations'
 import { WS_URL } from "../hooks/socketConfig";
 import useWebSocket from "react-use-websocket";
 
@@ -30,8 +29,8 @@ export const StartGameForm = () => {
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WS_URL,
     {
-      share: true,
-      filter: () => false,
+      share: false,
+      filter: () => true,
     }
   );
 
@@ -45,7 +44,8 @@ export const StartGameForm = () => {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const gameId = getUniqueID();
-    const gameName = data.gameName;
+    const { gameName } = data;
+
     sendJsonMessage({
       type: "gameevent",
       gameId,
