@@ -4,9 +4,10 @@ import { theme } from "../styles/theme";
 import { AuthContext } from "../context/authContext";
 import { useAuth } from "../hooks/auth-hook";
 import Head from "next/head";
+import { Protected } from "../components/Protected";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { token, login, logout, setUserData, user } = useAuth();
+  const values = useAuth();
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -36,17 +37,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#333333" />
         <meta name="theme-color" content="#333333" />
       </Head>
-      <AuthContext.Provider
-        value={{
-          isLoggedIn: !!token,
-          token: token,
-          login: login,
-          logout: logout,
-          setUserData: setUserData,
-          user: user,
-        }}
-      >
-        <Component {...pageProps} />
+
+      <AuthContext.Provider value={values}>
+        <Protected>
+          <Component {...pageProps} />
+        </Protected>
       </AuthContext.Provider>
     </ChakraProvider>
   );

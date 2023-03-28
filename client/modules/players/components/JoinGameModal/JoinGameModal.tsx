@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useEffect, useContext } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -54,9 +54,19 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
     WS_URL,
     {
       share: true,
-      filter: () => false,
+      filter: () => true,
     }
   );
+
+  //   useEffect(() => {
+  //     if (lastJsonMessage !== null) {
+  //       if (typeof lastJsonMessage === "object") {
+  //         const storedData = JSON.parse(JSON.stringify(lastJsonMessage));
+  //         if (storedData.type === "annonuymsuser" && storedData.data.user) {
+  //         }
+  //       }
+  //     }
+  //   }, [lastJsonMessage]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     //const gameId = game.id

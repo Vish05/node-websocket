@@ -19,10 +19,13 @@ export const GameRouter: NextPage = () => {
     defaultIsOpen: !user?.name,
   });
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(WS_URL, {
-    share: true,
-    filter: () => true,
-  });
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    WS_URL,
+    {
+      share: true,
+      filter: () => true,
+    }
+  );
 
   console.log("38 =>", lastJsonMessage);
   useEffect(() => {
@@ -37,7 +40,7 @@ export const GameRouter: NextPage = () => {
           setGame(storedData.data.game);
           const responseData = storedData.data.user;
           setUserData(responseData);
-          console.log(storedData)
+          console.log(storedData);
         }
       }
     }
@@ -48,7 +51,7 @@ export const GameRouter: NextPage = () => {
       type: "getGameUpdate",
       gameId,
     });
-  }, [sendJsonMessage]);
+  }, []);
 
   if (!user?.name) {
     return <JoinGameModal isOpen={isOpen} onClose={onClose} />;

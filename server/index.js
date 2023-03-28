@@ -36,34 +36,57 @@ const typesDef = {
   ANNONUYMSUER: "annonuymsuser",
   GAME_EVENT: "gameevent",
   GETPLAYERS: "getPlayers",
-  GETGAMEUPDATE: "getGameUpdate"
+  GETGAMEUPDATE: "getGameUpdate",
 };
 
 wsServer.on("request", function (request) {
-  var userID = getUniqueID();
   const connection = request.accept(null, request.origin);
+  var userID = getUniqueID();
+  const { id } = request.resourceURL.query;
+  if (id) {
+    userID = id;
+  }
   clients[userID] = connection;
-  console.log("connected: " + userID + " in " + Object.getOwnPropertyNames(clients));
-  console.log("\n")
+  console.log(
+    "connected: " + userID + " in " + Object.getOwnPropertyNames(clients)
+  );
+
+  const user = {
+    id: userID,
+    date: Date.now(),
+    name: "",
+    points: 0,
+    isSpectator: false,
+  };
+  users[userID] = user;
+  //userActivity.push(`${dataFromClient.username} joined to edit the document`);
+  const json = {
+    type: typesDef.ANNONUYMSUER,
+    data: { user },
+  };
+  connection.sendUTF(JSON.stringify(json));
+
   connection.on("message", function (message) {
     if (message.type === "utf8") {
       const dataFromClient = JSON.parse(message.utf8Data);
       const json = { type: dataFromClient.type };
-      if (dataFromClient.type === typesDef.ANNONUYMSUER) {
-        const user = {
-          id: userID,
-          date: Date.now(),
-          name: "",
-          points: 0,
-          isSpectator: false
-        };
-        users[userID] = user;
-        userActivity.push(
-          `${dataFromClient.username} joined to edit the document`
-        );
-        json.data = { user }
-        sendMessage(JSON.stringify(json));
-      } else if (dataFromClient.type === typesDef.GAME_EVENT) {  // Start Game Home Page
+      //   if (dataFromClient.type === typesDef.ANNONUYMSUER) {
+      //     const user = {
+      //       id: userID,
+      //       date: Date.now(),
+      //       name: "",
+      //       points: 0,
+      //       isSpectator: false,
+      //     };
+      //     users[userID] = user;
+      //     userActivity.push(
+      //       `${dataFromClient.username} joined to edit the document`
+      //     );
+      //     json.data = { user };
+      //     sendMessage(JSON.stringify(json));
+      //   } else if (dataFromClient.type === typesDef.GAME_EVENT) {
+      if (dataFromClient.type === typesDef.GAME_EVENT) {
+        // Start Game Home Page
         const { gameName, gameId, ownerUserID } = dataFromClient;
         gameActivity[gameId] = {
           gameName: gameName,
@@ -74,9 +97,9 @@ wsServer.on("request", function (request) {
         };
         json.data = { gameActivity };
         sendMessage(JSON.stringify(json));
-      } else if (dataFromClient.type === typesDef.USER_EVENT) {  // Name Update pop up
+      } else if (dataFromClient.type === typesDef.USER_EVENT) {
+        // Name Update pop up
         const { name, userId, gameId, isSpectator, points } = dataFromClient;
-        
 
         gameActivity[gameId].users.push(userId);
         users[userId].name = name;
@@ -86,41 +109,39 @@ wsServer.on("request", function (request) {
         userActivity.push(
           `${dataFromClient.userId} joined to edit the document`
         );
-        // const jsonData = {
-        //   type: "nameUpdate",
-        //   data: { game: gameActivity[gameId], user: users[userId]}
-        // }
-        // //sendMessage(JSON.stringify(jsonData));
-        // clients[userID].sendUTF(JSON.stringify(jsonData));
+        const jsonData = {
+          type: "nameUpdate",
+          data: { game: gameActivity[gameId], user: users[userId] },
+        };
+        //sendMessage(JSON.stringify(jsonData));
+        clients[userId].sendUTF(JSON.stringify(jsonData));
 
         const json = {
           type: "gameUpdate",
-          data: { game: gameActivity[gameId], user: users[userId] }
-        }
+          data: { game: gameActivity[gameId], user: users[userId] },
+        };
         sendMessage(JSON.stringify(json));
-
       } else if (dataFromClient.type === typesDef.GETGAMEUPDATE) {
-        const { gameId,type } = dataFromClient;
+        const { gameId, type } = dataFromClient;
         const json = {
           type: type,
-          data: { game: gameActivity[gameId] }
-        }
+          data: { game: gameActivity[gameId] },
+        };
         sendMessage(JSON.stringify(json));
-
       } else if (dataFromClient.type === typesDef.GETPLAYERS) {
         const { gameId, type } = dataFromClient;
         const users = gameActivity[gameId].users;
         const json = {
           type: type,
-          data: { users }
-        }
+          data: { users },
+        };
         sendMessage(JSON.stringify(json));
       }
     }
   });
   // user disconnected
-  connection.on("close", function (connection,reason) {
-    console.log('ws is closed with code: ' + connection + ' reason: '+ reason);
+  connection.on("close", function (connection, reason) {
+    console.log("ws is closed with code: " + connection + " reason: " + reason);
     // console.log((new Date()) + " Peer " + userID + " disconnected.");
     // const json = { type: typesDef.USER_EVENT };
     // userActivity.push(`${users[userID].username} left the document`);

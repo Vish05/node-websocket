@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import {
   Input,
   FormControl,
@@ -9,9 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { AuthContext } from "../context/authContext";
-import { WS_URL } from "../hooks/socketConfig";
-import useWebSocket from "react-use-websocket";
+import { useGame } from "../hooks/useGame";
 
 type Inputs = {
   gameName: string;
@@ -19,20 +16,12 @@ type Inputs = {
 
 export const StartGameForm = () => {
   const router = useRouter();
+  const { sendRequest } = useGame();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
-  let { token: ownerUserID } = useContext(AuthContext);
-
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    WS_URL,
-    {
-      share: false,
-      filter: () => true,
-    }
-  );
 
   const getUniqueID = () => {
     const s4 = () =>
@@ -46,12 +35,14 @@ export const StartGameForm = () => {
     const gameId = getUniqueID();
     const { gameName } = data;
 
-    sendJsonMessage({
-      type: "gameevent",
-      gameId,
-      gameName,
-      ownerUserID,
-    });
+    //sendRequest("createGame");
+
+    // sendJsonMessage({
+    //   type: "gameevent",
+    //   gameId,
+    //   gameName,
+    //   ownerUserID,
+    // });
     router.push(`/game/${gameId}`);
   };
 

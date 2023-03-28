@@ -20,9 +20,9 @@ export const Game: NextPage = ({ game }: any) => {
   const borderColor = useColorModeValue("gray.100", "gray.600");
   const bgColor = useColorModeValue("#FAFEFA", "gray.700");
 
-  // if (!game || !players) {
-  //   return <Box>Loading...</Box>;
-  // }
+  if (!game) {
+    return <Box>Loading...</Box>;
+  }
 
   console.log(game.users);
   const players = game.users;
