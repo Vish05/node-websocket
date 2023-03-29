@@ -21,7 +21,7 @@ const users = {};
 // User activity history.
 let userActivity = [];
 // Game Activity.
-let gameActivity = [];
+let gameActivity = {};
 
 const sendMessage = (json) => {
   // We are sending the current data to all connected clients
@@ -42,13 +42,16 @@ const typesDef = {
 wsServer.on("request", function (request) {
   const connection = request.accept(null, request.origin);
   var userID = getUniqueID();
-  const { id } = request.resourceURL.query;
+  const { id, gameId } = request.resourceURL.query;
   if (id) {
     userID = id;
   }
   clients[userID] = connection;
+
+  
+
   console.log(
-    "connected: " + userID + " in " + Object.getOwnPropertyNames(clients)
+    "connected1111: " + gameId + " in " + Object.getOwnPropertyNames(clients)
   );
 
   const user = {
@@ -59,12 +62,23 @@ wsServer.on("request", function (request) {
     isSpectator: false,
   };
   users[userID] = user;
-  //userActivity.push(`${dataFromClient.username} joined to edit the document`);
   const json = {
     type: typesDef.ANNONUYMSUER,
     data: { user },
   };
   connection.sendUTF(JSON.stringify(json));
+
+  const jsonNameUpdate = {
+    type: "nameUpdate",
+    data: { user: users[userID] },
+  };
+  connection.sendUTF(JSON.stringify(jsonNameUpdate));
+
+  const jsonData = {
+    type: "gameUpdate",
+    data: { game: gameActivity[gameId] },
+  };
+  connection.sendUTF(JSON.stringify(jsonData));
 
   connection.on("message", function (message) {
     if (message.type === "utf8") {
@@ -93,33 +107,36 @@ wsServer.on("request", function (request) {
           gameId: gameId,
           owenerId: ownerUserID,
           revealed: false,
-          users: [ownerUserID],
+          players: [ownerUserID],
         };
-        json.data = { gameActivity };
+        json.data = {game: gameActivity[gameId] };
         sendMessage(JSON.stringify(json));
+
       } else if (dataFromClient.type === typesDef.USER_EVENT) {
         // Name Update pop up
         const { name, userId, gameId, isSpectator, points } = dataFromClient;
-
-        gameActivity[gameId].users.push(userId);
+        if (gameActivity[gameId].owenerId !== userId) {
+          gameActivity[gameId].players.push(userId);
+        }
+        console.log("userchecking", userId)
         users[userId].name = name;
         users[userId].isSpectator = isSpectator;
         users[userId].points = points;
-
-        userActivity.push(
-          `${dataFromClient.userId} joined to edit the document`
-        );
+        console.log("gameActivity=>",gameActivity[gameId]);
         const jsonData = {
           type: "nameUpdate",
           data: { game: gameActivity[gameId], user: users[userId] },
         };
         //sendMessage(JSON.stringify(jsonData));
+        
         clients[userId].sendUTF(JSON.stringify(jsonData));
+        console.log("gameActivity aftwer=>",gameActivity[gameId]);
 
         const json = {
           type: "gameUpdate",
           data: { game: gameActivity[gameId], user: users[userId] },
         };
+        console.log("before game udpate send=>",JSON.stringify(json));
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.GETGAMEUPDATE) {
         const { gameId, type } = dataFromClient;

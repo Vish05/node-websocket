@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react";
+import { useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -15,15 +15,7 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { WS_URL } from "../../../../hooks/socketConfig";
-import useWebSocket from "react-use-websocket";
-import { AuthContext } from "../../../../context/authContext";
-import { useRouter } from "next/router";
-
-//import { createPlayer } from 'src/modules/games/mutations'
-
-//import { useGame, useMe } from 'src/modules/games/queries'
-//import { updateDisplayName } from '../../mutations/updateDisplayName'
+import { useGame } from "../../../../hooks/useGame";
 
 interface JoinGameModalProps {
   isOpen: boolean;
@@ -38,35 +30,12 @@ type Inputs = {
 
 // This modal is shown when the user joins a game and doesn't have a display name
 export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
-  // const { game } = useGame()
-  // const { me } = useMe()
+  const { game, sendRequest } = useGame()
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
-
-  const router = useRouter();
-  const { id: gameId } = router.query;
-  let { token: userId, user, isLoggedIn } = useContext(AuthContext);
-
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    WS_URL,
-    {
-      share: true,
-      filter: () => true,
-    }
-  );
-
-  //   useEffect(() => {
-  //     if (lastJsonMessage !== null) {
-  //       if (typeof lastJsonMessage === "object") {
-  //         const storedData = JSON.parse(JSON.stringify(lastJsonMessage));
-  //         if (storedData.type === "annonuymsuser" && storedData.data.user) {
-  //         }
-  //       }
-  //     }
-  //   }, [lastJsonMessage]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     //const gameId = game.id
@@ -79,16 +48,16 @@ export function JoinGameModal({ isOpen, onClose }: JoinGameModalProps) {
     // Create player in db
     //await createPlayer({ gameId, isSpectator })
 
-    const { displayName, isSpectator } = data;
+    sendRequest("userevent", data)
 
-    sendJsonMessage({
-      type: "userevent",
-      userId,
-      name: displayName,
-      isSpectator: isSpectator,
-      points: user.points,
-      gameId,
-    });
+    // sendJsonMessage({
+    //   type: "userevent",
+    //   userId,
+    //   name: displayName,
+    //   isSpectator: isSpectator,
+    //   points: user.points,
+    //   gameId,
+    // });
 
     onClose();
   };

@@ -1,15 +1,21 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { WS_URL } from "./socketConfig";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { AuthContext } from "../context/authContext";
+import { useRouter } from "next/router";
+
 
 export const useGame = () => {
-  const { login, logout, token, setUserData, user } = useContext(AuthContext);
+  const { login, isLoggedIn, token, setUserData, user, setGameData, game, players, setPlayersData } = useContext(AuthContext);
+  const router = useRouter();
+  const { id: gameId } = router.query;
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WS_URL, {
     onOpen: () => {
       console.log("WebSocket connection established.");
     },
-    queryParams: { id: token || "" },
+    queryParams: {
+      id: token || "", gameId: gameId?.toString() || ''
+    },
     share: true,
     filter: () => true,
     retryOnError: false,
@@ -20,28 +26,82 @@ export const useGame = () => {
     if (lastJsonMessage !== null) {
       if (typeof lastJsonMessage === "object") {
         const storedData = JSON.parse(JSON.stringify(lastJsonMessage));
+        //console.log(storedData);
         if (storedData.type === "annonuymsuser" && storedData.data.user) {
-          const { id, isSpectator, name, points } = storedData.data.user;
-          login(id);
-          const newUser = {
-            id,
-            isSpectator,
-            name,
-            points,
-          };
-          setUserData(newUser);
+          if (!isLoggedIn) {
+            const { id } = storedData.data.user;
+            login(id);
+            console.log("setUserData called", storedData.data.user)
+            setUserData(storedData.data.user);
+          }
         }
+        if (storedData.type === "gameevent" && storedData.data.game) {
+          console.log("inside gameevent", storedData.data.game);
+          const { gameId, gameName, owenerId, revealed, players } = storedData.data.game;
+          setGameData({
+            gameId: gameId,
+            gameName: gameName,
+            owenerId: owenerId,
+            revealed: revealed,
+            players: players
+          })
+        }
+        if (storedData.type === "nameUpdate" && storedData.data.user) {
+          console.log("inside nameUpdate");
+          const responseData = storedData.data.user;
+          setPlayersData(responseData);
+          console.log("setUserData called", storedData.data.user)
+          setUserData({
+            id: user.id,
+            name: storedData.data.user.name,
+            isSpectator: storedData.data.user.isSpectator,
+            points: storedData.data.user.points
+          })
+        }
+        if (storedData.type === "gameUpdate" && storedData.data.game) {
+          console.log("inside gameUpdate");
+          setGameData(storedData.data.game);
+        }
+
       }
     }
   }, [lastJsonMessage]);
 
-  const sendRequest = (type: string) => {
+  const getUniqueID = () => {
+    const s4 = () =>
+      Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    return s4() + s4() + "-" + s4();
+  };
+
+  const sendRequest = (type: string, data: any) => {
     switch (type) {
       case "createGame":
+        const gameId = getUniqueID()
+        const gameName = data;
         sendJsonMessage({
           type: "gameevent",
+          gameId,
+          gameName,
+          ownerUserID: user.id
         });
-        return console.log("createGame");
+        setGameData({
+          ...game,
+          gameId: gameId,
+          gameName: gameName
+        })
+        return gameId;
+      case "userevent":
+        sendJsonMessage({
+          type: "userevent",
+          userId: user.id,
+          name: data.displayName,
+          isSpectator: data.isSpectator,
+          points: user.points,
+          gameId: game.gameId,
+        });
+        return "";
       default:
         console.log("Unknwon switch param: ");
     }
@@ -50,9 +110,9 @@ export const useGame = () => {
   return {
     token: user.id,
     login,
-    logout,
     user,
-    isLoggedIn: !!user.id,
     sendRequest,
+    game,
+    players
   };
 };

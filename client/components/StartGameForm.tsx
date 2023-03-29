@@ -23,26 +23,9 @@ export const StartGameForm = () => {
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
-  const getUniqueID = () => {
-    const s4 = () =>
-      Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    return s4() + s4() + "-" + s4();
-  };
-
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const gameId = getUniqueID();
     const { gameName } = data;
-
-    //sendRequest("createGame");
-
-    // sendJsonMessage({
-    //   type: "gameevent",
-    //   gameId,
-    //   gameName,
-    //   ownerUserID,
-    // });
+    const gameId = sendRequest("createGame", gameName);
     router.push(`/game/${gameId}`);
   };
 

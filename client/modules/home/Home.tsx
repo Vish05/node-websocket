@@ -11,7 +11,6 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import { useGame } from "../../hooks/useGame";
 
 export const Home: NextPage = () => {
   const backgroundColor = useColorModeValue("#FAFEFA", "#171923");

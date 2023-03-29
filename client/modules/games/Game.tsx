@@ -1,5 +1,6 @@
 import { Box, VStack, Flex, Image, useColorModeValue } from "@chakra-ui/react";
 import { NextPage } from "next";
+import { useGame } from "../../hooks/useGame";
 
 //import { useGame } from './queries'
 
@@ -10,13 +11,8 @@ import { ResultsSummary } from "../../components/ResultsSummary";
 import { Spectators } from "../../components/Spectators";
 import { Logo } from "../../components/Logo";
 
-export const Game: NextPage = ({ game }: any) => {
-  //const { game, players } = useGame()
-  //   const game = {
-  //     revealed: true,
-  //     name: "poker",
-  //   };
-
+export const Game: NextPage = () => {
+  const { game } = useGame()
   const borderColor = useColorModeValue("gray.100", "gray.600");
   const bgColor = useColorModeValue("#FAFEFA", "gray.700");
 
@@ -24,8 +20,7 @@ export const Game: NextPage = ({ game }: any) => {
     return <Box>Loading...</Box>;
   }
 
-  console.log(game.users);
-  const players = game.users;
+  const players = game.players;
 
   return (
     <Box>
@@ -35,12 +30,12 @@ export const Game: NextPage = ({ game }: any) => {
             <Box w="full" py="8" px="75">
               <Logo />
             </Box>
-            <Box flex={1}>{players && <Table players={players} />}</Box>
+            <Box flex={1}>{players && <Table />}</Box>
             {game?.revealed && <ResultsSummary />}
           </Flex>
         </Box>
         <Box w="500px" borderLeft="3px solid" borderColor={borderColor}>
-          <Header name={game.name} />
+          <Header name={game.gameName} />
           <VStack spacing={4} align="stretch" px="9">
             <Box py="9">
               <PointPicker />

@@ -1,23 +1,21 @@
 import { Flex, Grid, GridItem, Image, Box } from '@chakra-ui/react'
+import { useGame } from '../hooks/useGame';
 import Player from './Player/Player'
 
 // import { DocumentData } from 'firebase/firestore'
 //import { useGame } from '../modules/games/queries'
 
-export function Table({ players }: any): JSX.Element {
-  //const { players } = useGame()
-  // const players = [
-  //   {
-  //     name: "vishal",
-  //     isSpectator: false,
-  //     points: 8
-  //   }
+export function Table(): JSX.Element {
+  const { game, players: playersData } = useGame();
 
-  // ]
+  if (!game && !playersData) {
+    return <div>Loading...</div>
+  }
 
-  // if (!players) {
-  //   return <div>Loading...</div>
-  // }
+  const currentPlayers = game?.players;
+  const players = currentPlayers.map((id) => playersData.find((p) => p.id === id));
+
+  console.log(players.map((p) => console.log(p.name)));
 
   return (
     <Grid

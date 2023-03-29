@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import {
   HStack,
   useToast,
@@ -13,34 +12,14 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { ChevronDownIcon, CopyIcon, EditIcon, ExternalLinkIcon, ViewIcon } from '@chakra-ui/icons'
-// import { useAuthState } from 'react-firebase-hooks/auth'
-// import { auth } from '@/core/firebase'
 import { ChangeNameModal } from '../modules/players/components/ChangeNameModal'
-//mport { useGame, useMe } from '../modules/games/queries'
 import { setIsSpectator } from '../modules/games/mutations/setIsSpectator'
 import { ColorModeButton } from './ColorModeButton'
-import { AuthContext } from '../context/authContext'
-import { useRouter } from "next/router";
+import { useGame } from '../hooks/useGame'
 
 
 export const Menu = () => {
-  //const { me } = useMe()
-  //const { game } = useGame();
-  const router = useRouter();
-  const { id: curretGameID } = router.query;
-  const { user } = useContext(AuthContext);
-
-
-  console.log(typeof curretGameID)
-
-  const game =
-  {
-    points: 3,
-    isSpectator: false,
-    id: curretGameID
-  }
-
-  //const [user] = useAuthState(auth);
+  const { game, user } = useGame()
   const toast = useToast()
   const { isOpen, onClose, onOpen } = useDisclosure()
 

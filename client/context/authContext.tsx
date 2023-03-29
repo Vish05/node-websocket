@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { AuthContextType } from "./authContext.type";
+import { AuthContextType, IUser } from "./authContext.type";
 
 export const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
@@ -10,7 +10,22 @@ export const AuthContext = createContext<AuthContextType>({
     isSpectator: false,
     points: 0
   },
+  game: {
+    gameId: "",
+    gameName: "",
+    owenerId: "",
+    revealed: false,
+    players: [],
+  },
+  players: [{
+    id: "",
+    name: "",
+    isSpectator: false,
+    points: 0
+  }],
   login: () => { },
   logout: () => { },
-  setUserData: () => { }
+  setUserData: () => { },
+  setGameData: () => { },
+  setPlayersData: () => { }
 });
