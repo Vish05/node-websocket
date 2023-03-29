@@ -105,36 +105,36 @@ wsServer.on("request", function (request) {
           revealed: false,
           players: [ownerUserID],
         };
-        json.data = {game: gameActivity[gameId] };
+        json.data = { game: gameActivity[gameId] };
         sendMessage(JSON.stringify(json));
-
       } else if (dataFromClient.type === typesDef.USER_EVENT) {
         // Name Update pop up
         const { name, userId, gameId, isSpectator, points } = dataFromClient;
         if (gameActivity[gameId].owenerId !== userId) {
           gameActivity[gameId].players.push(userId);
         }
-        
+
         users[userId] = {
           name,
           isSpectator,
-          points
-        }
-        console.log("gameActivity=>",gameActivity[gameId]);
+          points,
+          id: userId,
+        };
+        console.log("gameActivity=>", gameActivity[gameId]);
         const jsonData = {
           type: "nameUpdate",
           data: { game: gameActivity[gameId], user: users[userId] },
         };
         //sendMessage(JSON.stringify(jsonData));
-        
+
         clients[userId].sendUTF(JSON.stringify(jsonData));
-        console.log("gameActivity aftwer=>",gameActivity[gameId]);
+        console.log("gameActivity aftwer=>", gameActivity[gameId]);
 
         const json = {
           type: "gameUpdate",
           data: { game: gameActivity[gameId], user: users[userId] },
         };
-        console.log("before game udpate send=>",JSON.stringify(json));
+        console.log("before game udpate send=>", JSON.stringify(json));
         sendMessage(JSON.stringify(json));
       } else if (dataFromClient.type === typesDef.GETGAMEUPDATE) {
         const { gameId, type } = dataFromClient;

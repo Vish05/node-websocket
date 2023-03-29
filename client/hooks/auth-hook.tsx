@@ -13,7 +13,7 @@ const initalStateGame = {
   gameName: "",
   owenerId: "",
   revealed: false,
-  players: []
+  players: [],
 };
 
 export const useAuth = () => {
@@ -29,6 +29,7 @@ export const useAuth = () => {
       points: 0,
     };
     setUser(userData);
+    console.log("inside login auth-hook =>", userData);
     localStorage.setItem("userData", JSON.stringify(userData));
   }, []);
 
@@ -44,6 +45,7 @@ export const useAuth = () => {
         ...data,
       };
       setUser(userData);
+      console.log("inside setuserdata auth-hook =>", userData);
       localStorage.setItem("userData", JSON.stringify(userData));
     },
     [user]
@@ -63,13 +65,34 @@ export const useAuth = () => {
   const setPlayersData = useCallback(
     (data: IUser) => {
       console.log("setPlayerData called");
+      //   let playersData;
+      //   if (players) {
+      //     playersData = [...players, data];
+      //   } else {
+      //     playersData = [data];
+      //   }
+
       let playersData;
-      if (players) {
-        playersData = [...players, data]
+      const index = players?.findIndex((p) => p.id === data.id) || -1;
+      if (index > -1) {
+        const playersData = [...(players || [])];
+        playersData[index] = {
+          ...playersData[index],
+          ...data,
+        };
+        console.log(playersData);
       } else {
         playersData = [data];
       }
+
       setPlayers(playersData);
+      console.log(
+        "inside setPlayersData auth-hook =>",
+        playersData,
+        data,
+        players
+      );
+      console.log("stop");
     },
     [players]
   );

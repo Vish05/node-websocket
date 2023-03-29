@@ -3,11 +3,20 @@ import { WS_URL } from "./socketConfig";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { AuthContext } from "../context/authContext";
 import { useRouter } from "next/router";
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 export const useGame = () => {
-  const { login, isLoggedIn, token, setUserData, user, setGameData, game, players, setPlayersData } = useContext(AuthContext);
+  const {
+    login,
+    isLoggedIn,
+    token,
+    setUserData,
+    user,
+    setGameData,
+    game,
+    players,
+    setPlayersData,
+  } = useContext(AuthContext);
   const router = useRouter();
   const { id: gameId } = router.query;
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WS_URL, {
@@ -15,7 +24,8 @@ export const useGame = () => {
       console.log("WebSocket connection established.");
     },
     queryParams: {
-      id: token ?? "", gameId: gameId?.toString() ?? ''
+      id: token ?? "",
+      gameId: gameId?.toString() ?? "",
     },
     share: true,
     filter: () => true,
@@ -32,38 +42,37 @@ export const useGame = () => {
           if (!isLoggedIn) {
             const { id } = storedData.data.user;
             login(id);
-            console.log("setUserData called", storedData.data.user)
+            console.log("setUserData called", storedData.data.user);
             setUserData(storedData.data.user);
           }
         }
         if (storedData.type === "gameevent" && storedData.data.game) {
           console.log("inside gameevent", storedData.data.game);
-          const { gameId, gameName, owenerId, revealed, players } = storedData.data.game;
+          const { gameId, gameName, owenerId, revealed, players } =
+            storedData.data.game;
           setGameData({
             gameId: gameId,
             gameName: gameName,
             owenerId: owenerId,
             revealed: revealed,
-            players: players
-          })
+            players: players,
+          });
         }
         if (storedData.type === "nameUpdate" && storedData.data.user) {
           console.log("inside nameUpdate");
           const responseData = storedData.data.user;
           setPlayersData(responseData);
-          console.log("setUserData called", storedData.data.user)
+          console.log("setUserData called", storedData.data.user);
           setUserData({
             id: user.id,
             name: storedData.data.user.name,
             isSpectator: storedData.data.user.isSpectator,
-            points: storedData.data.user.points
-          })
+            points: storedData.data.user.points,
+          });
         }
         if (storedData.type === "gameUpdate" && storedData.data.game) {
-          console.log("inside gameUpdate");
           setGameData(storedData.data.game);
         }
-
       }
     }
   }, [lastJsonMessage]);
@@ -77,13 +86,13 @@ export const useGame = () => {
           type: "gameevent",
           gameId,
           gameName,
-          ownerUserID: user.id
+          ownerUserID: user.id,
         });
         setGameData({
           ...game,
           gameId: gameId,
-          gameName: gameName
-        })
+          gameName: gameName,
+        });
         return gameId;
       case "userevent":
         sendJsonMessage({
@@ -106,6 +115,6 @@ export const useGame = () => {
     user,
     sendRequest,
     game,
-    players
+    players,
   };
 };
