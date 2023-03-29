@@ -26,8 +26,6 @@ export const GameRouter: NextPage = () => {
         //sendRequest("createPlayer", "get")
         console.log("user not in current game =>", user.id)
       }
-
-
     }
     checkAndJoinGame()
   }, [user])

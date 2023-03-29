@@ -15,7 +15,7 @@ export function Table(): JSX.Element {
   const currentPlayers = game?.players;
   const players = currentPlayers.map((id) => playersData.find((p) => p.id === id));
 
-  console.log(players.map((p) => console.log(p.name)));
+  console.log(game, players);
 
   return (
     <Grid
@@ -27,7 +27,7 @@ export function Table(): JSX.Element {
         "bl-empty player-15 player-11 player-3 player-4 player-12 player-16 br-empty"
       `}
     >
-      {players
+      {/* {players
         .filter((player: any) => !player.isSpectator)
         .splice(0, 16)
         .map(({ name, points }, i) => {
@@ -38,7 +38,7 @@ export function Table(): JSX.Element {
               </Flex>
             </GridItem>
           )
-        })}
+        })} */}
       <GridItem area={'table'}>
         <Flex h='100%' w='100%' alignItems='center' justifyContent='center'>
           <Image src='/assets/table.svg' alt='Table' />

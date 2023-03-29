@@ -3,6 +3,7 @@ import { WS_URL } from "./socketConfig";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { AuthContext } from "../context/authContext";
 import { useRouter } from "next/router";
+import { v4 as uuidv4 } from 'uuid';
 
 
 export const useGame = () => {
@@ -14,7 +15,7 @@ export const useGame = () => {
       console.log("WebSocket connection established.");
     },
     queryParams: {
-      id: token || "", gameId: gameId?.toString() || ''
+      id: token ?? "", gameId: gameId?.toString() ?? ''
     },
     share: true,
     filter: () => true,
@@ -67,18 +68,10 @@ export const useGame = () => {
     }
   }, [lastJsonMessage]);
 
-  const getUniqueID = () => {
-    const s4 = () =>
-      Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    return s4() + s4() + "-" + s4();
-  };
-
   const sendRequest = (type: string, data: any) => {
     switch (type) {
       case "createGame":
-        const gameId = getUniqueID()
+        const gameId = uuidv4();
         const gameName = data;
         sendJsonMessage({
           type: "gameevent",
@@ -95,10 +88,10 @@ export const useGame = () => {
       case "userevent":
         sendJsonMessage({
           type: "userevent",
-          userId: user.id,
+          userId: token,
           name: data.displayName,
           isSpectator: data.isSpectator,
-          points: user.points,
+          points: 0,
           gameId: game.gameId,
         });
         return "";

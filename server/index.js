@@ -47,13 +47,9 @@ wsServer.on("request", function (request) {
     userID = id;
   }
   clients[userID] = connection;
-
-  
-
   console.log(
     "connected1111: " + gameId + " in " + Object.getOwnPropertyNames(clients)
   );
-
   const user = {
     id: userID,
     date: Date.now(),
@@ -118,10 +114,12 @@ wsServer.on("request", function (request) {
         if (gameActivity[gameId].owenerId !== userId) {
           gameActivity[gameId].players.push(userId);
         }
-        console.log("userchecking", userId)
-        users[userId].name = name;
-        users[userId].isSpectator = isSpectator;
-        users[userId].points = points;
+        
+        users[userId] = {
+          name,
+          isSpectator,
+          points
+        }
         console.log("gameActivity=>",gameActivity[gameId]);
         const jsonData = {
           type: "nameUpdate",
