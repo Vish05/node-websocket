@@ -9,7 +9,7 @@ export interface IGame {
   gameId: string;
   gameName: string;
   owenerId: string;
-  revealed: boolean;
+  revealed?: boolean;
   players: string[];
 }
 

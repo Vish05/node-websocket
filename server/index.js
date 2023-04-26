@@ -43,14 +43,7 @@ wsServer.on("request", function (request) {
   const connection = request.accept(null, request.origin);
   var userID = getUniqueID();
   const { id, gameId } = request.resourceURL.query;
-  if (id) {
-    userID = id;
-  }
-  clients[userID] = connection;
-  console.log(
-    "connected1111: " + gameId + " in " + Object.getOwnPropertyNames(clients)
-  );
-  const user = {
+  let user = {
     id: userID,
     date: Date.now(),
     name: "",
@@ -58,6 +51,15 @@ wsServer.on("request", function (request) {
     isSpectator: false,
   };
   users[userID] = user;
+  if (id) {
+    userID = id;
+    user = users[userID] 
+  }
+  clients[userID] = connection;
+  console.log(
+    "connected1111: " + gameId + " in " + Object.getOwnPropertyNames(clients)
+  );
+  
   const json = {
     type: typesDef.ANNONUYMSUER,
     data: { user },
