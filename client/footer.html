@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Bottom Sheet</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+    @media(max-width:767px){        
+        .dFlex{display: flex;}
+        .footerMainWrap{background-color: #fff;border-top-left-radius: 10px;border-top-right-radius: 20px;
+        position: fixed;
+        bottom: 0; 
+        left: 0;
+        box-sizing: border-box;
+        right: 0;border: 1px solid #eee;border-bottom: 0;padding-bottom: 16px;}
+        .justify-content-center{justify-content: center;}
+        .footerTitle{    font-size: 20px;
+        padding: 16px;
+        min-height: 56px;
+        align-items: center;
+        text-align: center;
+        text-transform: capitalize;
+        color: #000;
+        margin: 0;
+        box-sizing: border-box;
+        height: 100%;}
+        .wFull{width: 100%;}
+        .iconHead{margin-right: 10px;font-size: 20px;}
+        .mainContent{overflow-y: auto;max-height: 300px;transition: 0.5s;height: 0;}
+        .flexColumn{flex-direction: column;}
+        .footerMainWrap .divider{border-bottom: 1px solid #eee;}
+        .innerContent{padding: 24px;}
+
+        .mainContent::-webkit-scrollbar-track
+        {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+        }
+
+        .mainContent::-webkit-scrollbar
+        {
+        width: 6px;
+        background-color: #ddd;
+        }
+
+        .mainContent::-webkit-scrollbar-thumb
+        {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: #ddd;
+        }
+        .btnFooter{
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid transparent;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        height: 48px;
+        width: 100%;
+        color: #fff;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+        font-weight: bold;
+        text-transform:uppercase;
+        letter-spacing: 0.04em;
+        }
+        .FooterActions{margin-top: 16px;}
+        .innerContentFooter{padding: 16px;}
+        .btnSecondary{
+        color: #337ab7;
+        background-color: #fff;
+        border-color: #ddd;margin-top: 8px;
+
+        }
+        .relativePos{position: relative;}
+        .closeIcon{
+        font-size: 30px;
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        }
+        .handleBarBtn{
+        color: #ddd;
+        height: 4px;
+        width: 50px;
+        display: flex;
+        margin: 8px auto;
+        text-align: center;
+        background: #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+        .justify-content-between{justify-content: space-between;}
+        .defaultBtn{
+        align-items: center;
+        margin-right: 16px;
+        color: #337ab7;
+        }
+        .wHalf{width: 50%;}
+        .align-flex-end{align-self: flex-end;}
+    }     
+</style>
+    </head>
+<body>
+
+
+<Footer>
+    <div class="dFlex footerMainWrap wFull flexColumn">
+        <a href="javascript:void(0)" onclick="openNav()" class="handleBarBtn"></a>
+        <div class="justify-content-center dFlex relativePos wFull">
+            <h2 class="footerTitle dFlex"><span class="iconHead">i</span> Title</h2>
+            <span class="closeIcon" onclick="closeNav()">&times;</span>
+        </div>
+        <!-- <div class="justify-content-between dFlex relativePos wFull">
+            <h2 class="footerTitle dFlex"><span class="iconHead">i</span> Title</h2>
+            <a class="defaultBtn justify-content-center dFlex" onclick="closeNav()"><span class="iconHead">i</span>Default</a>
+        </div> -->
+        <!-- <div class="justify-content-between wHalf dFlex relativePos align-flex-end">
+            <h2 class="footerTitle dFlex"><span class="iconHead">i</span> Title</h2>
+            <a class="defaultBtn justify-content-center dFlex" onclick="closeNav()"><span class="iconHead">i</span>Default</a>
+        </div> -->
+        <div class="divider"></div> 
+        
+        <div class="dFlex flexColumn wFull mainContent" id="mainContent">
+            <div class="innerContent">
+                <p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                </p><p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                </p><p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                </p>
+            </div>  
+        </div>
+        <div class="dFlex flexColumn wFull FooterActions">
+            <div class="innerContentFooter">
+                <button type="button" class="btnFooter ">Primary</button>
+                <button type="button" class="btnFooter btnSecondary">secondory</button>
+
+            </div>
+        </div>
+
+    </div>
+</Footer> 
+<script>
+    function openNav() {
+      document.getElementById("mainContent").style.height = "250px";
+    }
+    
+    function closeNav() {
+      document.getElementById("mainContent").style.height = "0";
+    }
+    </script>
+</body>
+</html>
